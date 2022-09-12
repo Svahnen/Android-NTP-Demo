@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import android.widget.TextView;
 
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -14,5 +15,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         TextView clock = findViewById(R.id.clock);
         ClockConfig clockConfig = new ClockConfig(clock);
+
     }
 }
