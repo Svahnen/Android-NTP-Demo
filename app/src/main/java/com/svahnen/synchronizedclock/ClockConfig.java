@@ -8,5 +8,7 @@ public class ClockConfig {
     public ClockConfig(TextView clock) {
         this.clock = clock;
         clock.setText("some text");
+
+
     }
 }
