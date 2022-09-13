@@ -1,5 +1,6 @@
 package com.svahnen.synchronizedclock;
 
+import android.os.Handler;
 import android.widget.TextView;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -10,25 +11,41 @@ import java.util.Date;
 
 public class ClockConfig  {
 
+    private Handler hUpdate;
+    private Runnable rUpdate;
+    String time;
+
     public static final String TIME_SERVER = "time-a.nist.gov";
 
     public ClockConfig(TextView clock) throws IOException {
 
         clock.setText("Loading...");
 
-        Thread thread = new Thread(() -> {
-            try  {
-                //System.out.println("Time is: " + getCurrentNetworkTime());
-                clock.setText(getCurrentNetworkTime().toString());
-                //Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                e.printStackTrace();
+
+        hUpdate = new Handler();
+        rUpdate = () -> clock.setText(time);
+
+        Thread tUpdate = new Thread() {
+            public void run() {
+                while(true) {
+                    hUpdate.post(rUpdate);
+                    try {
+                        time = getCurrentNetworkTime().toString();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        });
+        };
 
-        thread.start();
-
+        tUpdate.start();
     }
+
 
     public static Date getCurrentNetworkTime() throws IOException {
         NTPUDPClient timeClient = new NTPUDPClient();
