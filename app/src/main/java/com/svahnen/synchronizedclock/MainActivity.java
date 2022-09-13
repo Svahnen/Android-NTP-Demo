@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import android.widget.TextView;
 
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +16,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView clock = findViewById(R.id.clock);
-        ClockConfig clockConfig = new ClockConfig(clock);
+        try {
+            ClockConfig clockConfig = new ClockConfig(clock);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }
