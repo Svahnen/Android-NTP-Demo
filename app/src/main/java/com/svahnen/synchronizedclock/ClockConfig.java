@@ -11,6 +11,7 @@ import java.util.Date;
 
 public class ClockConfig  {
 
+    private static NTPUDPClient timeClient = null;
     private Handler hUpdate;
     private Runnable rUpdate;
     String time = "Loading...";
@@ -28,8 +29,10 @@ public class ClockConfig  {
                 while(true) {
                     hUpdate.post(rUpdate);
                     try {
+                        System.out.println("Going to update time");
                         time = getCurrentNetworkTime().toString();
-                        sleep(10000);
+                        System.out.println("Should have updated time");
+                        sleep(5000);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -42,7 +45,9 @@ public class ClockConfig  {
 
 
     public static Date getCurrentNetworkTime() throws IOException {
-        NTPUDPClient timeClient = new NTPUDPClient();
+        if (timeClient == null) {
+            timeClient = new NTPUDPClient();
+        }
         InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
         TimeInfo timeInfo = timeClient.getTime(inetAddress);
         long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
