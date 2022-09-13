@@ -79,7 +79,6 @@ public class ClockConfig  {
         System.out.println("Got time info");
         long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
         System.out.println("Got return time");
-        timeClient.close();
         return new Date(returnTime);
     }
 }
