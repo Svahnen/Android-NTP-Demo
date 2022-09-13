@@ -63,9 +63,10 @@ public class ClockConfig  {
             System.out.println("Got inet address");
         }
         while(true){
-            System.out.println("Trying to get time");
             try {
-                // Often breaks here
+                timeClient.open();
+                timeClient.setSoTimeout(2000);
+                System.out.println("Trying to get time (often breaks here)");
                 timeInfo = timeClient.getTime(inetAddress);
                 break;
             } catch (IOException e) {
