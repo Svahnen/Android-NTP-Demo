@@ -29,10 +29,10 @@ public class ClockConfig  {
                 while(true) {
                     hUpdate.post(rUpdate);
                     try {
+                        sleep(5000);
                         System.out.println("Going to update time");
                         time = getCurrentNetworkTime().toString();
                         System.out.println("Should have updated time");
-                        sleep(5000);
                     } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -51,7 +51,7 @@ public class ClockConfig  {
         InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
         TimeInfo timeInfo = timeClient.getTime(inetAddress);
         long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        timeClient.close();
+        //timeClient.close();
         return new Date(returnTime);
     }
 }
