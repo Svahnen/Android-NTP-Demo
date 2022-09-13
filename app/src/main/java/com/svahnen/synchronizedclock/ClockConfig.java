@@ -7,14 +7,18 @@ import org.apache.commons.net.ntp.TimeInfo;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 public class ClockConfig  {
 
     private static NTPUDPClient timeClient = null;
+    private static InetAddress inetAddress = null;
+    private static TimeInfo timeInfo = null;
     private Handler hUpdate;
     private Runnable rUpdate;
     String time = "Loading...";
+    int loops = 0;
 
     public static final String TIME_SERVER = "time-a.nist.gov";
 
@@ -27,13 +31,16 @@ public class ClockConfig  {
         Thread tUpdate = new Thread() {
             public void run() {
                 while(true) {
+                    loops++;
+                    System.out.println("Loop: " + loops);
                     hUpdate.post(rUpdate);
                     try {
                         sleep(5000);
                         System.out.println("Going to update time");
                         time = getCurrentNetworkTime().toString();
                         System.out.println("Should have updated time");
-                    } catch (IOException | InterruptedException e) {
+                    } catch (InterruptedException e) {
+                        System.out.println("Error updating time");
                         e.printStackTrace();
                     }
                 }
@@ -44,14 +51,32 @@ public class ClockConfig  {
     }
 
 
-    public static Date getCurrentNetworkTime() throws IOException {
+    public static Date getCurrentNetworkTime() {
         if (timeClient == null) {
             timeClient = new NTPUDPClient();
+            System.out.println("Created time client");
+            try {
+                inetAddress = InetAddress.getByName(TIME_SERVER);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Got inet address");
         }
-        InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
-        TimeInfo timeInfo = timeClient.getTime(inetAddress);
+        while(true){
+            System.out.println("Trying to get time");
+            try {
+                // Often breaks here
+                timeInfo = timeClient.getTime(inetAddress);
+                break;
+            } catch (IOException e) {
+                System.out.println("Error getting time");
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Got time info");
         long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        //timeClient.close();
+        System.out.println("Got return time");
+        timeClient.close();
         return new Date(returnTime);
     }
 }
