@@ -1,4 +1,4 @@
-/*
+package com.svahnen.synchronizedclock;/*
  * Original work Copyright (C) 2008 The Android Open Source Project
  * Modified work Copyright (C) 2019, Aslam Anver
  *
@@ -46,6 +46,10 @@ public class SNTPClient {
 
     public interface Listener {
         void onTimeResponse(String rawDate, Date date, Exception ex);
+
+        void onTimeReceived(String rawDate);
+
+        void onError(Exception ex);
     }
 
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
