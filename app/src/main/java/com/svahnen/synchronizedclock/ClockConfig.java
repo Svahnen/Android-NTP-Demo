@@ -13,17 +13,15 @@ public class ClockConfig  {
 
     private Handler hUpdate;
     private Runnable rUpdate;
-    String time;
+    String time = "Loading...";
 
     public static final String TIME_SERVER = "time-a.nist.gov";
 
     public ClockConfig(TextView clock) throws IOException {
 
-        clock.setText("Loading...");
-
-
         hUpdate = new Handler();
         rUpdate = () -> clock.setText(time);
+        clock.setText(time);
 
         Thread tUpdate = new Thread() {
             public void run() {
@@ -31,12 +29,8 @@ public class ClockConfig  {
                     hUpdate.post(rUpdate);
                     try {
                         time = getCurrentNetworkTime().toString();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        sleep(5000);
-                    } catch (InterruptedException e) {
+                        sleep(10000);
+                    } catch (IOException | InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
@@ -52,8 +46,7 @@ public class ClockConfig  {
         InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
         TimeInfo timeInfo = timeClient.getTime(inetAddress);
         long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        //long returnTime = timeInfo.getReturnTime();   //local device time
-
+        timeClient.close();
         return new Date(returnTime);
     }
 }
