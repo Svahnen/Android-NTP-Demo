@@ -28,7 +28,7 @@ public class ClockConfig {
 
         hUpdate = new Handler();
         rUpdate = () -> {
-            System.out.println("From handler");
+            System.out.println("Updating UI from handler");
             clock.setText(time);
         };
         clock.setText(time);
@@ -93,14 +93,5 @@ public class ClockConfig {
             }
         }
         return new Date(returnTime);
-    }
-
-    public void goOffline() {
-        offline = true;
-    }
-
-    public void goOnline() {
-        //TODO: Add a way to check if the device cant go online to solve issue #2
-        offline = false;
     }
 }

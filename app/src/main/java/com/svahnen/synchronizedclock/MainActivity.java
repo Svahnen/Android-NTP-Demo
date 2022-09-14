@@ -2,6 +2,8 @@ package com.svahnen.synchronizedclock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,12 +26,37 @@ public class MainActivity extends AppCompatActivity {
 
         Button button= findViewById(R.id.offline_button);
         button.setOnClickListener(view -> {
-            ClockConfig.offline = !ClockConfig.offline;
             if (ClockConfig.offline) {
-                button.setText("Offline");
+                if (getInternetConnection()) {
+                    ClockConfig.offline = false;
+                    button.setText("Online");
+                } else {
+                    button.setText("No internet");
+                }
             } else {
-                button.setText("Online");
+                ClockConfig.offline = true;
+                button.setText("Offline");
+                System.out.println("Set to offline");
             }
         });
+
     }
+
+    public boolean getInternetConnection() {
+        boolean connected = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo[] networkInfos = connectivityManager.getAllNetworkInfo();
+        for(NetworkInfo info:networkInfos){
+            if (info.getTypeName().equalsIgnoreCase("WIFI"))if (info.isConnected())connected = true;
+            if (info.getTypeName().equalsIgnoreCase("MOBILE DATA"))if (info.isConnected())connected = true;
+        }
+        if (connected) {
+            System.out.println("Have connection, device is online");
+            return true;
+        } else {
+            System.out.println("No connection, device is offline");
+            return false;
+        }
+    }
+
 }
