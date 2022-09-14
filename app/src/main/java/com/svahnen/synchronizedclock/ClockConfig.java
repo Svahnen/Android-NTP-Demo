@@ -16,6 +16,7 @@ public class ClockConfig  {
     private static InetAddress inetAddress = null;
     private static TimeInfo timeInfo = null;
     private static long returnTime;
+    private static Boolean offline = true;
     private Handler hUpdate;
     private Runnable rUpdate;
     String time = "Loading...";
@@ -53,7 +54,8 @@ public class ClockConfig  {
         tUpdate.start();
     }
 
-    public static Date getCurrentNetworkTime() {
+    public Date getCurrentNetworkTime() {
+        //TODO: Add a way to check if the device is offline, if it is set offline to true and don't create timeClient
         if (timeClient == null) {
             timeClient = new NTPUDPClient();
             System.out.println("Created time client");
@@ -68,6 +70,13 @@ public class ClockConfig  {
         while(tries < 5) {
             tries++;
             try {
+                if (offline) {
+                    System.out.println("Offline");
+                    if (loops > 10) {
+                        offline = false;
+                    }
+                    return new Date(System.currentTimeMillis());
+                }
                 timeClient.open();
                 timeClient.setSoTimeout(2000);
                 System.out.println("Trying to get time (often gets timed out, will try 5 times)");
