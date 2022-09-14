@@ -50,7 +50,6 @@ public class ClockConfig  {
         tUpdate.start();
     }
 
-
     public static Date getCurrentNetworkTime() {
         if (timeClient == null) {
             timeClient = new NTPUDPClient();
