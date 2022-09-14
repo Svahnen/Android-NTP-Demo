@@ -10,13 +10,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 
-public class ClockConfig  {
+public class ClockConfig {
 
     private static NTPUDPClient timeClient = null;
     private static InetAddress inetAddress = null;
     private static TimeInfo timeInfo = null;
     private static long returnTime;
-    private static Boolean offline = true;
+    public static Boolean offline = true;
     private Handler hUpdate;
     private Runnable rUpdate;
     String time = "Loading...";
@@ -71,9 +71,6 @@ public class ClockConfig  {
             try {
                 if (offline) {
                     System.out.println("Offline");
-                    if (loops > 8){ // Temp test to see what happens when going online
-                        offline = false;
-                    }
                     return new Date(System.currentTimeMillis());
                 }
                 timeClient.open();
