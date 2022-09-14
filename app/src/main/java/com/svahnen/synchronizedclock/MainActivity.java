@@ -3,8 +3,6 @@ package com.svahnen.synchronizedclock;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,9 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
         Button button= findViewById(R.id.offline_button);
         button.setOnClickListener(view -> {
-            // click handling code
+            ClockConfig.offline = !ClockConfig.offline;
+            if (ClockConfig.offline) {
+                button.setText("Offline");
+            } else {
+                button.setText("Online");
+            }
         });
-
     }
-
 }

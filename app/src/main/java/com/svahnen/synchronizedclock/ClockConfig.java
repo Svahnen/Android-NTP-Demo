@@ -75,7 +75,7 @@ public class ClockConfig {
                 }
                 timeClient.open();
                 timeClient.setSoTimeout(2000);
-                System.out.println("Trying to get time (often gets timed out, will try 5 times)");
+                System.out.println("Trying to get online time (often gets timed out, will try 5 times)");
                 // This sometime gets timed out, current workaround is to just try again
                 // TODO: Find a better way to handle this
                 timeInfo = timeClient.getTime(inetAddress);
