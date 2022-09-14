@@ -15,6 +15,7 @@ public class ClockConfig  {
     private static NTPUDPClient timeClient = null;
     private static InetAddress inetAddress = null;
     private static TimeInfo timeInfo = null;
+    private static long returnTime;
     private Handler hUpdate;
     private Runnable rUpdate;
     String time = "Loading...";
@@ -25,7 +26,10 @@ public class ClockConfig  {
     public ClockConfig(TextView clock) throws IOException {
 
         hUpdate = new Handler();
-        rUpdate = () -> clock.setText(time);
+        rUpdate = () -> {
+            System.out.println("From handler");
+            clock.setText(time);
+        };
         clock.setText(time);
 
         Thread tUpdate = new Thread() {
@@ -46,7 +50,6 @@ public class ClockConfig  {
                 }
             }
         };
-
         tUpdate.start();
     }
 
@@ -61,23 +64,29 @@ public class ClockConfig  {
             }
             System.out.println("Got inet address");
         }
-        while(true){
+        int tries = 0;
+        while(tries < 5) {
+            tries++;
             try {
                 timeClient.open();
                 timeClient.setSoTimeout(2000);
-                System.out.println("Trying to get time (often breaks here)");
+                System.out.println("Trying to get time (often gets timed out, will try 5 times)");
                 // This sometime gets timed out, current workaround is to just try again
                 // TODO: Find a better way to handle this
                 timeInfo = timeClient.getTime(inetAddress);
+                System.out.println("Got time info");
+                returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+                System.out.println("Got return time");
                 break;
             } catch (IOException e) {
                 System.out.println("Error getting time");
+                if (tries == 5) {
+                    returnTime = System.currentTimeMillis();
+                    System.out.println("Using system time");
+                }
                 e.printStackTrace();
             }
         }
-        System.out.println("Got time info");
-        long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-        System.out.println("Got return time");
         return new Date(returnTime);
     }
 }
