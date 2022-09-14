@@ -55,8 +55,7 @@ public class ClockConfig  {
     }
 
     public Date getCurrentNetworkTime() {
-        //TODO: Add a way to check if the device is offline, if it is set offline to true and don't create timeClient
-        if (timeClient == null) {
+        if (timeClient == null && !offline) {
             timeClient = new NTPUDPClient();
             System.out.println("Created time client");
             try {
@@ -72,7 +71,7 @@ public class ClockConfig  {
             try {
                 if (offline) {
                     System.out.println("Offline");
-                    if (loops > 10) {
+                    if (loops > 8){ // Temp test to see what happens when going online
                         offline = false;
                     }
                     return new Date(System.currentTimeMillis());
@@ -97,5 +96,14 @@ public class ClockConfig  {
             }
         }
         return new Date(returnTime);
+    }
+
+    public void goOffline() {
+        offline = true;
+    }
+
+    public void goOnline() {
+        //TODO: Add a way to check if the device cant go online to solve issue #2
+        offline = false;
     }
 }
