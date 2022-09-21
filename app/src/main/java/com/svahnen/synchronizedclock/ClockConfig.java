@@ -22,17 +22,18 @@ public class ClockConfig {
     String time = "Loading...";
     int loops = 0;
 
-    public static final String TIME_SERVER = "time-a.nist.gov";
+    public static final String TIME_SERVER = "time-a.nist.gov"; //Set NTP server
 
     public ClockConfig(TextView clock) throws IOException {
 
-        hUpdate = new Handler();
-        rUpdate = () -> {
+        hUpdate = new Handler(); // Handler to update UI from inside a thread
+        rUpdate = () -> { // Runnable to update UI from inside a thread
             System.out.println("Updating UI from handler");
-            clock.setText(time);
+            clock.setText(time); //Set the clock text
         };
         clock.setText(time);
 
+        //Create a new thread to update the clock
         Thread tUpdate = new Thread() {
             public void run() {
                 while(true) {
@@ -40,7 +41,7 @@ public class ClockConfig {
                     System.out.println("Loop: " + loops);
                     hUpdate.post(rUpdate);
                     try {
-                        sleep(5000);
+                        sleep(5000); //Sleep so the clock doesn't update too fast
                         System.out.println("Going to update time");
                         time = getCurrentNetworkTime().toString();
                         System.out.println("Should have updated time");
@@ -54,6 +55,7 @@ public class ClockConfig {
         tUpdate.start();
     }
 
+    // Function to get the current time from the NTP server
     public Date getCurrentNetworkTime() {
         if (timeClient == null && !offline) {
             timeClient = new NTPUDPClient();
@@ -66,7 +68,7 @@ public class ClockConfig {
             System.out.println("Got inet address");
         }
         int tries = 0;
-        while(tries < 5) {
+        while(tries < 5) { //Try to get the time 5 times before using the offline time
             tries++;
             try {
                 if (offline) {
@@ -76,8 +78,8 @@ public class ClockConfig {
                 timeClient.open();
                 timeClient.setSoTimeout(2000);
                 System.out.println("Trying to get online time (often gets timed out, will try 5 times)");
-                // This sometime gets timed out, current workaround is to just try again
-                // TODO: Find a better way to handle this
+                //This sometime gets timed out, current workaround is to just try again
+                //TODO: Find a better way to handle this
                 timeInfo = timeClient.getTime(inetAddress);
                 System.out.println("Got time info");
                 returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
@@ -85,7 +87,7 @@ public class ClockConfig {
                 break;
             } catch (IOException e) {
                 System.out.println("Error getting time");
-                if (tries == 5) {
+                if (tries == 5) { //If it fails 5 times, use the offline time
                     returnTime = System.currentTimeMillis();
                     System.out.println("Using system time");
                 }

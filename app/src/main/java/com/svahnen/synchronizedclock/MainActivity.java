@@ -16,16 +16,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        TextView clock = findViewById(R.id.clock);
-        try {
+        setContentView(R.layout.activity_main); // Set the layout
+        TextView clock = findViewById(R.id.clock); //Find the clock textview
+        try { //Try to create a new clock config
             new ClockConfig(clock);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Button button= findViewById(R.id.offline_button);
-        button.setOnClickListener(view -> {
+        Button button= findViewById(R.id.offline_button); //Find the button
+        button.setOnClickListener(view -> { //Set the button to change the offline status
             if (ClockConfig.offline) {
                 if (getInternetConnection()) {
                     ClockConfig.offline = false;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+    // Function to check if the device is connected to the internet
     public boolean getInternetConnection() {
         boolean connected = false;
         ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE);
